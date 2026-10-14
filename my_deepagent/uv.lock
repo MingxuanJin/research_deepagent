@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12, <3.14"
 
 [[package]]
@@ -1049,6 +1049,41 @@ wheels = [
 ]
 
 [[package]]
+name = "my-deepagent"
+version = "0.1.0"
+source = { editable = "." }
+dependencies = [
+    { name = "agentseek-ag-ui" },
+    { name = "agentseek-langchain" },
+    { name = "bub" },
+    { name = "deepagents" },
+    { name = "langchain-openai" },
+    { name = "pydantic-settings" },
+    { name = "python-dotenv" },
+    { name = "tavily-python" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "agentseek-ag-ui", git = "https://github.com/ob-labs/agentseek.git?subdirectory=contrib%2Fagentseek-ag-ui&rev=900f89518c32f8570d7648897394ed96a86a647a" },
+    { name = "agentseek-langchain", git = "https://github.com/ob-labs/agentseek.git?subdirectory=contrib%2Fagentseek-langchain&rev=900f89518c32f8570d7648897394ed96a86a647a" },
+    { name = "bub", specifier = "==0.3.9" },
+    { name = "deepagents", specifier = "==0.7.8" },
+    { name = "langchain-openai", specifier = ">=0.3.0" },
+    { name = "pydantic-settings", specifier = ">=2.0.0" },
+    { name = "python-dotenv", specifier = ">=1.2.4" },
+    { name = "tavily-python", specifier = ">=0.8.5" },
+]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pytest", specifier = ">=8.4,<10" }]
+
+[[package]]
 name = "openai"
 version = "3.26.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1171,37 +1206,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/f9/e2/3e91f31a7d2b083fe
 wheels = [
     { url = "https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl", hash = "sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746", size = 20538, upload-time = "2025-05-15T12:30:06.134Z" },
 ]
-
-[[package]]
-name = "my-deepagent"
-version = "0.1.0"
-source = { editable = "." }
-dependencies = [
-    { name = "agentseek-ag-ui" },
-    { name = "agentseek-langchain" },
-    { name = "bub" },
-    { name = "deepagents" },
-    { name = "langchain-openai" },
-    { name = "pydantic-settings" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "agentseek-ag-ui", git = "https://github.com/ob-labs/agentseek.git?subdirectory=contrib%2Fagentseek-ag-ui&rev=900f89518c32f8570d7648897394ed96a86a647a" },
-    { name = "agentseek-langchain", git = "https://github.com/ob-labs/agentseek.git?subdirectory=contrib%2Fagentseek-langchain&rev=900f89518c32f8570d7648897394ed96a86a647a" },
-    { name = "bub", specifier = "==0.3.9" },
-    { name = "deepagents", specifier = "==0.7.8" },
-    { name = "langchain-openai", specifier = ">=0.3.0" },
-    { name = "pydantic-settings", specifier = ">=2.0.0" },
-]
-
-[package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=8.4,<10" }]
 
 [[package]]
 name = "prompt-toolkit"
@@ -1607,6 +1611,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/7b/2b/3850dc6bf7ef71b088962eba31dafc6cffd2f96e577ebb0bb316df96da3e/starlette-1.7.0.tar.gz", hash = "sha256:c79f74ea63cff761804fbbfb182f1e0b440c2d07b164d24700c5a1bab5d6ff5d", size = 2736246, upload-time = "2026-09-23T07:30:26.35Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4e/d6/1ec1b290f9e0fb067899b61e1d37a30c923068bad260b216dbe37a7d2967/starlette-1.7.0-py3-none-any.whl", hash = "sha256:67f8e99895493dd2911a03f11314af6ceebeae4e704bb9f43dfc6a9db151c93e", size = 78980, upload-time = "2026-09-23T07:30:24.567Z" },
+]
+
+[[package]]
+name = "tavily-python"
+version = "0.8.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "requests" },
+    { name = "tiktoken" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2f/39/3aff85cb3b45cab3ef9578560364b893baa34e79744e99567a825dbadf57/tavily_python-0.8.5.tar.gz", hash = "sha256:1795965c3ffe5654856244d637daa816a4ee947aca57d0588b731c69e75e71fe", size = 35634, upload-time = "2026-10-06T15:11:34.827Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2f/c5/fc13567e2a1d3671f51252d44f580bf3ab3c0a6ec90a6553f5c67ba87208/tavily_python-0.8.5-py3-none-any.whl", hash = "sha256:f8d2880f5aa67cf3ee2eb1f7c9336ea50dc331eb1e406688391badb0140599a7", size = 24629, upload-time = "2026-10-06T15:11:33.854Z" },
 ]
 
 [[package]]

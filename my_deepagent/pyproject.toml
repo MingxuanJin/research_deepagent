@@ -11,6 +11,8 @@ dependencies = [
     "deepagents==0.7.8",
     "langchain-openai>=0.3.0",
     "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.2.4",
+    "tavily-python>=0.8.5",
 ]
 
 [dependency-groups]
