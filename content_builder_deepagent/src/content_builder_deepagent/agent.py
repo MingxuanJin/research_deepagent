@@ -24,8 +24,10 @@ from langchain.chat_models import init_chat_model
 
 from content_builder_deepagent.lesson_tools import (
     publish_report,
+    read_material,
     read_report,
     read_source,
+    save_material,
     save_preference,
     save_report,
 )
@@ -213,7 +215,7 @@ def build_graph(chat_model, *, checkpointer=None, approvals: bool = False):
         raise ValueError("Search enabled but TAVILY_API_KEY is missing")
     if images and not _nonempty_env("GOOGLE_API_KEY"):
         raise ValueError("Images enabled but GOOGLE_API_KEY is missing")
-    tools = [read_source, save_report, read_report, save_preference]
+    tools = [read_source, save_material, read_material, save_report, read_report, save_preference]
     if images:
         tools += [generate_cover, generate_social_image]
     if approvals:
@@ -251,6 +253,9 @@ def build_graph(chat_model, *, checkpointer=None, approvals: bool = False):
             "Read sources with read_source, save with save_report and verify with "
             "read_report. After successful verification, mark ALL todos completed before "
             "the final answer. If any step fails, keep its todo incomplete. "
+            "Save materials with save_material and verify with read_material "
+            "use edit_file for a local patch and save_material for a full rewrite. "
+            "Cite the material paths actually used."
             "When using the bundled course notes, label that material as synthetic, "
             "cite the source paths, and keep those claims supported by the notes. "
             "Preserve the provenance of user-provided and researched material; "
