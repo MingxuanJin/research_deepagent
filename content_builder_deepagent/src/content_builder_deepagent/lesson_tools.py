@@ -30,6 +30,23 @@ def read_source(name: str) -> str:
         raise ValueError("Use a Markdown filename from sources/")
     return _path("sources", name).read_text(encoding="utf-8")
 
+@tool
+def save_material(name: str, content: str) -> str:
+    """Save a material file to materials/<name>.md; overwrites the whole file."""
+    if not re.fullmatch(r"[a-z0-9_-]+\.md", name):
+        raise ValueError("Use a lowercase Markdown filename from materials/")
+    target = _path("materials", name)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(content, encoding="utf-8")
+    return f"Saved materials/{name}; use read_material to verify it."
+
+
+@tool
+def read_material(name: str) -> str:
+    """Read back materials/<name>.md to verify the actual saved material."""
+    if not re.fullmatch(r"[a-z0-9_-]+\.md", name):
+        raise ValueError("Use a lowercase Markdown filename from materials/")
+    return _path("materials", name).read_text(encoding="utf-8")
 
 @tool
 def save_report(slug: str, content: str) -> str:
