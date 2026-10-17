@@ -1,0 +1,12 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "content_builder": "./src/content_builder_deepagent/agent.py:graph"
+  },
+  "http": {
+    "app": "./src/content_builder_deepagent/webapp.py:app"
+  },
+  "env": "./.env"
+}
