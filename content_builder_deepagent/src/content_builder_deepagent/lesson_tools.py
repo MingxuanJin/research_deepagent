@@ -23,6 +23,18 @@ def _slug(value: str) -> str:
     return value
 
 
+def _material_name(name: str) -> str:
+    candidate = name.strip().lower()
+    for prefix in ("/materials/", "materials/"):
+        if candidate.startswith(prefix):
+            candidate = candidate[len(prefix):]
+    if not candidate.endswith(".md"):
+        candidate += ".md"
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,79}\.md", candidate):
+        raise ValueError("name must be a bare filename like 'brief.md'")
+    return candidate
+
+
 @tool
 def read_source(name: str) -> str:
     """Read a fixed course source by filename, such as planning.md or files.md."""
@@ -32,21 +44,29 @@ def read_source(name: str) -> str:
 
 @tool
 def save_material(name: str, content: str) -> str:
-    """Save a material file to materials/<name>.md; overwrites the whole file."""
-    if not re.fullmatch(r"[a-z0-9_-]+\.md", name):
-        raise ValueError("Use a lowercase Markdown filename from materials/")
-    target = _path("materials", name)
+    """Save a material file under materials/. `name` is a bare filename ending in .md,
+    for example "brief.md" — do not pass a directory or a path. Overwrites the whole file."""
+    try:
+        filename = _material_name(name)
+    except ValueError as e:
+        return f"Error: {e}. Received name={name!r}."
+    target = _path("materials", filename)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(content, encoding="utf-8")
-    return f"Saved materials/{name}; use read_material to verify it."
+    return f"Saved materials/{filename}; use read_material to verify it."
 
 
 @tool
 def read_material(name: str) -> str:
-    """Read back materials/<name>.md to verify the actual saved material."""
-    if not re.fullmatch(r"[a-z0-9_-]+\.md", name):
-        raise ValueError("Use a lowercase Markdown filename from materials/")
-    return _path("materials", name).read_text(encoding="utf-8")
+    """Read back a material file from materials/. `name` is a bare filename like "brief.md"."""
+    try:
+        filename = _material_name(name)
+    except ValueError as e:
+        return f"Error: {e}. Received name={name!r}."
+    target = _path("materials", filename)
+    if not target.is_file():
+        return f"Error: materials/{filename} not found. Save it with save_material first."
+    return target.read_text(encoding="utf-8")
 
 @tool
 def save_report(slug: str, content: str) -> str:

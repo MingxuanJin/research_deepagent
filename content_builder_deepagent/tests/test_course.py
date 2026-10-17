@@ -117,3 +117,51 @@ def test_optional_tools_need_both_opt_in_and_credentials(workspace, monkeypatch)
     model = ScriptedModel(replies=[AIMessage(content="Configured.")])
     agent.build_graph(model).invoke({"messages": [{"role": "user", "content": "Hello"}]})
     assert {"generate_cover", "generate_social_image"} <= set(model.seen_tools)
+
+
+def test_materials_save_read_back_and_modify(workspace):
+    model = ScriptedModel(replies=[
+        call("save_material", {"name": "brief.md", "content": "title: brief\nstatus: draft\n"}, "m1"),
+        call("read_material", {"name": "brief.md"}, "r1"),
+        call("edit_file", {"file_path": "/materials/brief.md",
+                           "old_string": "status: draft", "new_string": "status: final"}, "e1"),
+        call("read_material", {"name": "brief.md"}, "r2"),
+        call("edit_file", {"file_path": "/materials/brief.md",
+                           "old_string": "no-such-line", "new_string": "x"}, "e2"),
+        call("read_material", {"name": "brief.md"}, "r3"),
+        call("save_material", {"name": "brief.md",
+                               "content": "title: brief\nstatus: final\n"}, "m2"),
+        call("read_material", {"name": "brief.md"}, "r4"),
+        call("save_report", {"slug": "matlab",
+                             "content": "# Materials lab\n\n## Sources\n- materials/brief.md\n"}, "s1"),
+        call("read_report", {"slug": "matlab"}, "s2"),
+        AIMessage(content="done"),
+    ])
+    graph = agent.build_graph(model, checkpointer=InMemorySaver())
+    snapshots = list(graph.stream(
+        {"messages": [{"role": "user", "content": "materials lab"}]},
+        {"configurable": {"thread_id": "mat"}},
+        stream_mode="values",
+    ))
+    tools = {m.tool_call_id: m.content for m in snapshots[-1]["messages"] if m.type == "tool"}
+
+    assert (workspace / "materials/brief.md").read_text() == "title: brief\nstatus: final\n"
+    assert tools["r1"] == "title: brief\nstatus: draft\n"      # 改动前
+    assert tools["r2"] == "title: brief\nstatus: final\n"      # 补丁后
+    assert tools["e2"].startswith("Error: String not found")   # 失败编辑
+    assert tools["r3"] == tools["r2"]                          # 失败不改文件
+    assert "materials/brief.md" in tools["s2"]                 # 报告引用资料
+
+
+@pytest.mark.parametrize("given", ["brief.md", "brief", "materials/brief.md", "/materials/brief.md"])
+def test_material_name_forms(workspace, given):
+    lesson_tools.save_material.invoke({"name": given, "content": "x\n"})
+    assert (workspace / "materials/brief.md").read_text() == "x\n"
+
+
+def test_material_bad_input_returns_error_instead_of_raising(workspace):
+    result = lesson_tools.save_material.invoke({"name": "../x.md", "content": "x"})
+    assert result.startswith("Error:")
+    assert "Received name='../x.md'" in result
+    assert not (workspace.parent / "x.md").exists()
+    assert lesson_tools.read_material.invoke({"name": "missing.md"}).startswith("Error:")
