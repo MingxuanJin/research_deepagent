@@ -127,7 +127,7 @@ research_sub_agent = {
         "Only give this researcher one topic at a time."
     ),
     "system_prompt": RESEARCHER_INSTRUCTIONS.format(date=current_date),
-    "tools": [tavily_search, think_tool],
+    "tools": [think_tool],
 }
 
 MODEL_INIT_KWARGS: dict[str, object] = {
